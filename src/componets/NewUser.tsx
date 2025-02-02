@@ -1,61 +1,59 @@
-import { ChangeEvent, useState } from "react"
-import { IUser } from "../interfaces/IUser"
+import { ChangeEvent, useState } from "react";
+import { IUser } from "../interfaces/IUser";
 import { useNavigate } from "react-router-dom";
 import { appsetings } from "../settings/settings";
 import Swal from "sweetalert2";
-import '../styles/NewUser.css'
+import "../styles/NewUser.css";
 
 const initialUser = {
-    id: 0,
-    firstName: "",
-    lastName: "",
-    email: "",
-    dateCreated: new Date(),
-    isActive: true
-}
+  id: 0,
+  firstName: "",
+  lastName: "",
+  email: "",
+  dateCreated: new Date(),
+  isActive: true,
+};
 
-export function NewUser(){
+export function NewUser() {
+  const [user, setUser] = useState<IUser>(initialUser);
+  const navigate = useNavigate();
 
-    const[user, setUser] = useState<IUser>(initialUser);
-    const navigate = useNavigate();
+  const inputChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
+    const inputName = event.target.name;
+    const inputValue = event.target.value;
 
-    const inputChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
-        const inputName = event.target.name;
-        const inputValue = event.target.value;
+    setUser({ ...user, [inputName]: inputValue });
+  };
 
-        setUser({ ...user, [inputName]: inputValue})
+  const save = async () => {
+    const response = await fetch(`${appsetings.apiUrl}User/Create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+
+    if (response.ok) {
+      navigate("/");
+    } else {
+      Swal.fire({
+        title: "Error!",
+        text: "No se pudo guardar el usuario",
+        icon: "warning",
+      });
     }
+  };
 
-    const save = async() => {
-        const response = await fetch(`${appsetings.apiUrl}User/Create`, {
-            method: 'POST',
-            headers:{
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(user)
-        })
+  const returnHomePage = () => {
+    navigate("/");
+  };
 
-        if(response.ok) {
-            navigate("/")
-        }
-        else{
-            Swal.fire({
-                title: "Error!",
-                text: "No se pudo guardar el usuario",
-                icon: "warning"
-              });
-        }
-    }
-
-    const returnHomePage = () =>{
-        navigate("/")
-    }
-
-    return(
-    <div>
+  return (
+    <div className="containerNew">
       <h1>Create New User</h1>
 
-      <form>
+      <form className="formNew">
         <div>
           <label htmlFor="firstName">Nombre:</label>
           <input
@@ -107,6 +105,5 @@ export function NewUser(){
         <button onClick={returnHomePage}>Volver</button>
       </form>
     </div>
-        
-    )
+  );
 }

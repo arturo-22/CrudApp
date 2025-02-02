@@ -64,10 +64,10 @@ const returnHomePage = () =>{
   }, []);
 
   return(
-    <div>
+    <div className="containerUpdate">
       <h1>Update User</h1>
 
-      <form>
+      <form className="formUpdate">
         <div>
           <label htmlFor="firstName">Nombre:</label>
           <input
